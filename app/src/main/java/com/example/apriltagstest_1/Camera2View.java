@@ -57,10 +57,6 @@ public class Camera2View extends TextureView {
 
     public Camera2View(Context context) {
         this(context, null);
-        overlayView = new SurfaceView(context);
-        overlayView.getHolder().setFormat(PixelFormat.TRANSPARENT);
-        overlayView.setZOrderOnTop(true);//处于顶层
-        surfaceHolder = overlayView.getHolder();
     }
 
     public Camera2View(Context context, AttributeSet attrs) {
@@ -69,10 +65,6 @@ public class Camera2View extends TextureView {
         mThreadHandler = new HandlerThread("camera2");
         mThreadHandler.start();
         mHandler = new Handler(mThreadHandler.getLooper());
-        overlayView = new SurfaceView(context);
-        overlayView.getHolder().setFormat(PixelFormat.TRANSPARENT);
-        overlayView.setZOrderOnTop(true);//处于顶层
-        surfaceHolder = overlayView.getHolder();
     }
 
     // 打开指定摄像头的相机视图
@@ -87,6 +79,12 @@ public class Camera2View extends TextureView {
         // 从系统服务中获取相机管理器
         CameraManager cm = (CameraManager) mContext.getSystemService(Context.CAMERA_SERVICE);
         String cameraid = mCameraType + "";
+
+        overlayView = new SurfaceView(mContext);
+        overlayView.getHolder().setFormat(PixelFormat.TRANSPARENT);
+        overlayView.setZOrderOnTop(true);//处于顶层
+        surfaceHolder = overlayView.getHolder();
+
         try {
             // 获取可用相机设备列表
             CameraCharacteristics cc = cm.getCameraCharacteristics(cameraid);
@@ -174,6 +172,7 @@ public class Camera2View extends TextureView {
                     CameraMetadata.CONTROL_AF_TRIGGER_START);
             // 设置照片的方向
             mPreviewBuilder.set(CaptureRequest.JPEG_ORIENTATION, (mCameraType == CameraCharacteristics.LENS_FACING_FRONT) ? 90 : 270);
+
             // 创建一个相片捕获会话。此时预览画面显示在纹理视图上
             mCameraDevice.createCaptureSession(Arrays.asList(surface, mImageReader.getSurface()),
                     mSessionStateCallback, mHandler);
@@ -228,6 +227,7 @@ public class Camera2View extends TextureView {
         public void onImageAvailable(ImageReader imageReader) {
             Log.d(TAG, "onImageAvailable");
             mHandler.post(new ImageSaver(imageReader.acquireNextImage()));
+            imageReader.acquireNextImage();
 
             //定义画笔
             Paint mpaint = new Paint();

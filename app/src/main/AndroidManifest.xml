@@ -3,6 +3,7 @@
     package="com.example.apriltagstest_1">
     <!-- 拍照 -->
     <uses-permission android:name="android.permission.CAMERA" />
+
     <uses-feature android:name="android.hardware.camera.autofocus" />
 
     <application
@@ -12,8 +13,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".TakeShootingActivity"></activity>
-        <activity android:name=".MainActivity">
+        <activity android:name=".TakeShootingActivity" />
+        <activity android:name=".MainActivity"/>
+        <activity android:name=".TextureViewActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
