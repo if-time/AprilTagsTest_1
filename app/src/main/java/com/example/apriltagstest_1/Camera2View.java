@@ -40,7 +40,7 @@ import java.util.Arrays;
 import java.util.Collections;
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-public class Camera2View extends TextureView {
+public class Camera2View extends TextureView implements SurfaceTexture.OnFrameAvailableListener {
     private static final String                 TAG         = "Camera2View";
     private              Context                mContext; // 声明一个上下文对象
     private              Handler                mHandler;
@@ -156,6 +156,7 @@ public class Camera2View extends TextureView {
         // 设置表面纹理的默认缓存尺寸
         texture.setDefaultBufferSize(mPreViewSize.getWidth(), mPreViewSize.getHeight());
         // 创建一个该表面纹理的表面对象
+        texture.setOnFrameAvailableListener(this);
         Surface surface = new Surface(texture);
         try {
             mPreviewBuilder = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
@@ -278,6 +279,26 @@ public class Camera2View extends TextureView {
             return Long.signum((long) lhs.getWidth() * lhs.getHeight()
                     - (long) rhs.getWidth() * rhs.getHeight());
         }
+    }
+
+    @Override
+    public void onFrameAvailable(SurfaceTexture surfaceTexture) {
+        Log.i(TAG, "onFrameAvailable...");
+        //定义画笔
+        Paint mpaint = new Paint();
+        mpaint.setColor(Color.BLUE);
+        // mpaint.setAntiAlias(true);//去锯齿
+        mpaint.setStyle(Paint.Style.STROKE);//空心
+        // 设置paint的外框宽度
+        mpaint.setStrokeWidth(2f);
+
+        Canvas canvas = new Canvas();
+
+        canvas = surfaceHolder.lockCanvas();
+        canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR); //清楚掉上一次的画框。
+        Rect r = new Rect(0, 0, 100, 100);
+        canvas.drawRect(r, mpaint);
+        surfaceHolder.unlockCanvasAndPost(canvas);
     }
 
 }
